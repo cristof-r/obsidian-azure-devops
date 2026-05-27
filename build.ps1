@@ -2,33 +2,28 @@
 .SYNOPSIS
     Build and deploy the obsidian-azure-devops plugin to an Obsidian vault.
 
-.PARAMETER PluginsDir
-    Path to the vault's .obsidian/plugins folder.
+.PARAMETER VaultDir
+    Path to the root of the Obsidian vault (the folder containing .obsidian).
 
 .EXAMPLE
-    .\build.ps1 -PluginsDir "G:\My Drive\code\notes\.obsidian\plugins"
+    .\build.ps1 -VaultDir "C:\Users\you\Documents\MyVault"
 #>
 
 param(
     [Parameter(Mandatory)]
-    [string]$PluginsDir
+    [string]$VaultDir
 )
 
 $ErrorActionPreference = "Stop"
 $srcDir = $PSScriptRoot
 $manifest = Get-Content (Join-Path $srcDir "manifest.json") -Raw | ConvertFrom-Json
 $pluginId = $manifest.id
-$targetDir = Join-Path $PluginsDir $pluginId
-$tmpDir = [System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), "obsidian-plugin-$pluginId")
+$targetDir = Join-Path $VaultDir ".obsidian\plugins\$pluginId"
 
 Write-Host "Building $($manifest.name) ($pluginId)..." -ForegroundColor Cyan
 
 try {
-    Remove-Item $tmpDir -Recurse -Force -ErrorAction SilentlyContinue
-    New-Item $tmpDir -ItemType Directory -Force | Out-Null
-    Copy-Item "$srcDir\*" $tmpDir\ -Recurse -Exclude node_modules
-
-    Push-Location $tmpDir
+    Push-Location $srcDir
 
     Write-Host "  Installing dependencies..."
     npm install 2>$null | Out-Null
@@ -47,17 +42,18 @@ try {
         New-Item $targetDir -ItemType Directory -Force | Out-Null
     }
 
-    Copy-Item (Join-Path $tmpDir "main.js") $targetDir -Force
-    Copy-Item (Join-Path $tmpDir "manifest.json") $targetDir -Force
+    Copy-Item (Join-Path $srcDir "main.js") $targetDir -Force
+    Copy-Item (Join-Path $srcDir "manifest.json") $targetDir -Force
 
-    $stylesFile = Join-Path $tmpDir "styles.css"
+    $stylesFile = Join-Path $srcDir "styles.css"
     if (Test-Path $stylesFile) {
         Copy-Item $stylesFile $targetDir -Force
     }
 
     Write-Host "Deployed to $targetDir" -ForegroundColor Green
-} catch {
+}
+catch {
     Write-Host "ERROR: $_" -ForegroundColor Red
-    if ((Get-Location).Path -eq $tmpDir) { Pop-Location }
+    Pop-Location
     exit 1
 }
