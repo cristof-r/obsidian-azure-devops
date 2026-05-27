@@ -92,3 +92,6 @@ Each generated note contains:
 - **DevOps Info section** — a fenced sync block that is fully replaced on each sync
 - **Personal Notes section** — a free-form area that is never touched by the plugin
 
+## License
+
+[MIT](LICENSE) © Cristof Rojas
