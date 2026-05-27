@@ -1,0 +1,18 @@
+{
+  "name": "obsidian-devops-sync",
+  "version": "1.0.0",
+  "description": "Azure DevOps work item sync plugin for Obsidian",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "node esbuild.config.mjs production"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "esbuild": "^0.21.0",
+    "obsidian": "latest",
+    "typescript": "^5.4.0",
+    "tslib": "^2.6.0",
+    "builtin-modules": "^3.3.0"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "id": "devops-sync",
+  "name": "DevOps",
+  "version": "0.0.1",
+  "minAppVersion": "1.0.0",
+  "description": "Create and sync Azure DevOps work item notes in your vault.",
+  "author": "Cristof Rojas",
+  "isDesktopOnly": true
+}
